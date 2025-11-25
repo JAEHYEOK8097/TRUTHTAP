@@ -1,0 +1,549 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Truth Tap</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: linear-gradient(135deg, #000000 0%, #1a1a2e 50%, #16213e 100%);
+            position: relative;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', sans-serif;
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                radial-gradient(circle at 20% 50%, rgba(255, 255, 255, 0.03) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(255, 255, 255, 0.03) 0%, transparent 50%);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        header {
+            text-align: center;
+            padding: 30px 20px;
+            position: relative;
+            z-index: 1;
+        }
+
+        header h1 {
+            margin: 0;
+            font-size: 3rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #ffffff 0%, #e0e0e0 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            letter-spacing: -1px;
+        }
+
+        .mypage-link {
+            position: absolute;
+            top: 30px;
+            right: 30px;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .mypage-link:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: scale(1.1);
+        }
+
+        .mypage-link img {
+            width: 28px;
+            height: 28px;
+            filter: brightness(0) invert(1);
+        }
+
+        main {
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            align-items: center;
+            min-height: calc(100vh - 120px);
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 40px 20px;
+            text-align: center;
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(20px);
+            border-radius: 20px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            margin-top: 30px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            position: relative;
+            z-index: 1;
+        }
+
+        .input-section {
+            margin-bottom: 30px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
+        }
+
+        input[type="text"] {
+            font-size: 1.2rem;
+            padding: 18px 24px;
+            width: 100%;
+            max-width: 700px;
+            margin-bottom: 25px;
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            border-radius: 50px;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            color: #ffffff;
+            text-align: center;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            transition: all 0.3s ease;
+        }
+
+        input[type="text"]::placeholder {
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        input[type="text"]:focus {
+            outline: none;
+            border-color: rgba(255, 255, 255, 0.5);
+            box-shadow: 0 6px 20px rgba(255, 255, 255, 0.1);
+            background: rgba(255, 255, 255, 0.15);
+        }
+
+        button {
+            font-size: 1.2rem;
+            font-weight: 600;
+            padding: 16px 40px;
+            background: linear-gradient(135deg, #ffffff 0%, #f0f0f0 100%);
+            color: #000000;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(255, 255, 255, 0.2);
+        }
+
+        button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(255, 255, 255, 0.4);
+        }
+
+        button:active {
+            transform: translateY(-1px);
+        }
+
+        .score-section {
+            margin-top: 30px;
+            color: #ffffff;
+            width: 100%;
+        }
+
+        .score {
+            font-size: 2.5rem;
+            font-weight: 800;
+            padding: 30px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 20px;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            color: #ffffff;
+            transition: all 0.3s ease;
+        }
+
+        .action-row {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
+            max-width: 800px;
+            margin-top: 40px;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        .summary, .recommendation {
+            font-size: 1rem;
+            font-weight: 600;
+            color: #ffffff;
+            cursor: pointer;
+            text-decoration: none;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            padding: 12px 24px;
+            border-radius: 50px;
+            display: inline-block;
+            transition: all 0.3s ease;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+        }
+
+        .summary:hover, .recommendation:hover {
+            background: rgba(255, 255, 255, 0.2);
+            border-color: rgba(255, 255, 255, 0.5);
+            transform: translateY(-2px);
+        }
+
+        .summary-content {
+            display: none;
+            margin-top: 20px;
+            padding: 25px;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            max-height: 500px;
+            overflow-y: auto;
+            width: 100%;
+            max-width: 800px;
+            margin: 20px auto;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: rgba(255, 255, 255, 0.9);
+        }
+
+        .summary-content h4 {
+            margin-top: 0;
+            color: rgba(255, 255, 255, 0.95);
+            font-size: 1.2rem;
+            font-weight: 700;
+            margin-bottom: 15px;
+        }
+
+        .summary-content a {
+            display: block;
+            margin: 10px 0;
+            color: rgba(255, 255, 255, 0.9);
+            text-decoration: none;
+            padding: 12px 15px;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .summary-content a:hover {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: rgba(255, 255, 255, 0.3);
+            padding-left: 20px;
+            transform: translateX(5px);
+        }
+
+        .recommendations-section {
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .reason-section {
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .reason-section h4 {
+            margin-top: 0;
+            color: rgba(255, 255, 255, 0.95);
+            font-size: 1.2rem;
+            font-weight: 700;
+            margin-bottom: 15px;
+        }
+
+        .reason-section p {
+            line-height: 1.8;
+            color: rgba(255, 255, 255, 0.9);
+        }
+
+        .fake-article-type {
+            font-size: 1.3rem;
+            font-weight: 600;
+            margin-top: 20px;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            color: #ffffff;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .loading {
+            display: none;
+            margin-top: 20px;
+            font-size: 1.1rem;
+            color: rgba(255, 255, 255, 0.8);
+            font-weight: 300;
+        }
+
+        .recommendation-list {
+            display: none;
+            margin-top: 20px;
+            padding: 25px;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            text-align: left;
+            width: 100%;
+            max-width: 800px;
+            margin: 20px auto;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .recommendation-list h3 {
+            margin-top: 0;
+            color: #ffffff;
+            font-size: 1.3rem;
+            font-weight: 700;
+            margin-bottom: 15px;
+        }
+
+        .recommendation-list a {
+            display: block;
+            margin: 12px 0;
+            color: rgba(255, 255, 255, 0.9);
+            text-decoration: none;
+            font-size: 1rem;
+            padding: 10px;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .recommendation-list a:hover {
+            background: rgba(255, 255, 255, 0.1);
+            padding-left: 15px;
+        }
+
+        .back-button {
+            position: absolute;
+            top: 30px;
+            left: 30px;
+            padding: 10px 20px;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 50px;
+            color: #ffffff;
+            text-decoration: none;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            z-index: 10;
+        }
+
+        .back-button:hover {
+            background: rgba(255, 255, 255, 0.2);
+            border-color: rgba(255, 255, 255, 0.4);
+            transform: translateX(-5px);
+        }
+
+        .back-button::before {
+            content: '←';
+            font-size: 1.2rem;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <a href="index.html" class="back-button">뒤로가기</a>
+        <h1>Truth Tap</h1>
+    </header>
+    <main>
+        <div class="input-section">
+            <input type="text" id="urlInput" placeholder="기사 URL을 입력하세요">
+            <button onclick="checkCredibility()">신뢰도 평가</button>
+        </div>
+        <div class="loading" id="loading">기사를 분석하는 중입니다...</div>
+        <div class="score-section">
+            <div id="credibilityScore" class="score">기사의 신뢰도 : 0%</div>
+            <div id="fakeArticleType" class="fake-article-type" style="display: none;"></div>
+        </div>
+        <div class="action-row">
+            <div class="summary" onclick="toggleSummary()">더보기 ▼</div>
+        </div>
+        <div class="summary-content" id="summaryContent">
+            <p>요약된 기사 내용이 여기에 표시됩니다...</p>
+        </div>
+        <div class="recommendation-list" id="recommendationList" style="display: none;">
+            <h3>관련된 신뢰할 수 있는 기사 검색</h3>
+            <div id="recommendationLinks"></div>
+        </div>
+    </main>
+
+    <script>
+        // 메인 신뢰도 평가 함수
+        async function checkCredibility() {
+            const urlInput = document.getElementById('urlInput').value.trim();
+
+            if (!urlInput) {
+                alert('기사 URL을 입력해주세요.');
+                return;
+            }
+
+            // URL 형식 검증
+            try {
+                new URL(urlInput);
+            } catch (e) {
+                alert('올바른 URL 형식이 아닙니다.');
+                return;
+            }
+
+            const loadingElement = document.getElementById('loading');
+            const scoreElement = document.getElementById('credibilityScore');
+            const fakeTypeElement = document.getElementById('fakeArticleType');
+            const summaryContent = document.getElementById('summaryContent');
+            const recommendationList = document.getElementById('recommendationList');
+            const recommendationLinks = document.getElementById('recommendationLinks');
+
+            try {
+                // 로딩 표시
+                loadingElement.style.display = 'block';
+                scoreElement.innerText = '분석 중...';
+                fakeTypeElement.style.display = 'none';
+                recommendationList.style.display = 'none';
+                summaryContent.style.display = 'none'; // 초기화
+
+                // 백엔드 API 호출
+                const response = await fetch('http://localhost:3000/api/check-credibility', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ url: urlInput }),
+                });
+
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    throw new Error(errorData.error || '신뢰도 평가 실패');
+                }
+
+                const data = await response.json();
+
+                // 결과 표시
+                scoreElement.innerText = `기사의 신뢰도 : ${data.credibilityScore}%`;
+                
+                // 점수에 따른 색상 변경
+                if (data.credibilityScore >= 70) {
+                    scoreElement.style.color = '#4ade80';
+                    scoreElement.style.borderColor = 'rgba(74, 222, 128, 0.5)';
+                } else if (data.credibilityScore >= 40) {
+                    scoreElement.style.color = '#fbbf24';
+                    scoreElement.style.borderColor = 'rgba(251, 191, 36, 0.5)';
+                } else {
+                    scoreElement.style.color = '#f87171';
+                    scoreElement.style.borderColor = 'rgba(248, 113, 113, 0.5)';
+                }
+
+                // 가짜 기사 유형 표시 (70점 미만)
+                if (data.credibilityScore < 70) {
+                    fakeTypeElement.innerText = `가짜 기사 유형 : ${data.fakeArticleType}`;
+                    fakeTypeElement.style.display = 'block';
+                } else {
+                    fakeTypeElement.style.display = 'none';
+                }
+
+                // 탭 제목 업데이트 (항상 "더보기"로)
+                const summaryButton = document.querySelector('.summary');
+                summaryButton.innerText = '더보기 ▼';
+                summaryButton.setAttribute('data-score', data.credibilityScore);
+
+                // 요약 내용 업데이트
+                let summaryText = '';
+                if (data.credibilityScore >= 70 && data.summary !== '없음') {
+                    // 70점 이상: 요약 + 추천 검색어
+                    summaryText = `<p><strong>기사 요약:</strong><br>${data.summary}</p>`;
+                    
+                    if (data.recommendations && data.recommendations.length > 0) {
+                        let linksHtml = '<div class="recommendations-section"><h4>관련된 신뢰할 수 있는 기사 검색</h4>';
+                        data.recommendations.forEach(keyword => {
+                            if (keyword && keyword !== '없음') {
+                                const searchUrl = `https://www.google.com/search?q=${encodeURIComponent(keyword)}&tbm=nws`;
+                                linksHtml += `<a href="${searchUrl}" target="_blank">🔍 "${keyword}" 관련 뉴스 검색</a>`;
+                            }
+                        });
+                        linksHtml += '</div>';
+                        summaryText += linksHtml;
+                    }
+                } else {
+                    // 70점 미만: 상세 근거(먼저) + 요약 + 추천 검색어
+                    
+                    // 상세 근거를 가장 먼저 추가
+                    if (data.reason && data.reason !== '없음') {
+                        summaryText = `<div class="reason-section"><h4>상세 판단 근거</h4><p>${data.reason.replace(/\n/g, '<br>')}</p></div>`;
+                    }
+                    
+                    // 요약 추가
+                    if (data.summary !== '없음') {
+                        summaryText += `<p><strong>기사 요약:</strong><br>${data.summary}</p>`;
+                    }
+                    
+                    // 추천 검색어 추가 (70% 이상과 동일하게)
+                    if (data.recommendations && data.recommendations.length > 0) {
+                        let linksHtml = '<div class="recommendations-section"><h4>관련된 신뢰할 수 있는 기사 검색</h4>';
+                        data.recommendations.forEach(keyword => {
+                            if (keyword && keyword !== '없음') {
+                                const searchUrl = `https://www.google.com/search?q=${encodeURIComponent(keyword)}&tbm=nws`;
+                                linksHtml += `<a href="${searchUrl}" target="_blank">🔍 "${keyword}" 관련 뉴스 검색</a>`;
+                            }
+                        });
+                        linksHtml += '</div>';
+                        summaryText += linksHtml;
+                    }
+                }
+                
+                summaryContent.innerHTML = summaryText;
+
+            } catch (error) {
+                console.error('Error:', error);
+                alert(`오류가 발생했습니다: ${error.message}`);
+                scoreElement.innerText = '기사의 신뢰도 : 오류 발생';
+                scoreElement.style.color = 'red';
+            } finally {
+                loadingElement.style.display = 'none';
+            }
+        }
+
+        function toggleSummary() {
+            const content = document.getElementById('summaryContent');
+            const summaryButton = document.querySelector('.summary');
+            const score = summaryButton.getAttribute('data-score');
+            
+            content.style.display = content.style.display === "none" || content.style.display === "" ? "block" : "none";
+            
+            if (content.style.display === "block") {
+                summaryButton.innerText = "더보기 숨기기 ▲";
+            } else {
+                summaryButton.innerText = "더보기 ▼";
+            }
+        }
+    </script>
+</body>
+</html>
